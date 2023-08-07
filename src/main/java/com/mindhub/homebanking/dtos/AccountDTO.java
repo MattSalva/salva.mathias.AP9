@@ -9,14 +9,14 @@ public class AccountDTO {
     private Long id;
     private String number;
     private Double balance;
-    private LocalDate creationDate;
+    private LocalDate date;
 
     public AccountDTO(Account account) {
 
         id = account.getId();
         number = account.getNumber();
         balance = account.getBalance();
-        creationDate = account.getCreationDate();
+        date = account.getCreationDate();
 
 
     }
@@ -33,7 +33,7 @@ public class AccountDTO {
         return balance;
     }
 
-    public LocalDate getCreationDate() {
-        return creationDate;
+    public LocalDate getDate() {
+        return date;
     }
 }
