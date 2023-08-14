@@ -1,18 +1,14 @@
 package com.mindhub.homebanking;
 
-import com.mindhub.homebanking.models.Account;
-import com.mindhub.homebanking.models.Client;
-import com.mindhub.homebanking.models.Transaction;
-import com.mindhub.homebanking.models.TransactionType;
-import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
-import com.mindhub.homebanking.repositories.TransactionRepository;
+import com.mindhub.homebanking.models.*;
+import com.mindhub.homebanking.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @SpringBootApplication
 public class HomebankingApplication {
@@ -24,7 +20,7 @@ public class HomebankingApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository){
+	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository){
 		return (args) -> {
 
 			Client clientMelba = new Client("mmorel@outlook.com", "Melba", "Morel");
@@ -68,6 +64,31 @@ public class HomebankingApplication {
 			transactionRepository.save(transaction7);
 			transactionRepository.save(transaction8);
 			transactionRepository.save(transaction9);
+
+			Loan loan1 = new Loan("Hipotecario", 500000.0, List.of(12, 24, 36, 48, 60));
+			Loan loan2 = new Loan("Personal", 100000.0, List.of(6, 12, 24));
+			Loan loan3 = new Loan("Automotriz", 300000.0, List.of(6, 12, 24, 36));
+
+			loanRepository.save(loan1);
+			loanRepository.save(loan2);
+			loanRepository.save(loan3);
+
+			ClientLoan clientLoan1 = new ClientLoan(400000.0, 60, clientMelba, loan1);
+			ClientLoan clientLoan2 = new ClientLoan(50000.0, 12, clientMelba, loan2);
+
+			ClientLoan clientLoan3 = new ClientLoan(100000.0, 24, clientMatt, loan2);
+			ClientLoan clientLoan4 = new ClientLoan(200000.0, 36, clientMatt, loan3);
+
+			clientLoanRepository.save(clientLoan1);
+			clientLoanRepository.save(clientLoan2);
+			clientLoanRepository.save(clientLoan3);
+			clientLoanRepository.save(clientLoan4);
+
+
+
+
+
+
 
 
 

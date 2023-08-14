@@ -1,10 +1,14 @@
 package com.mindhub.homebanking.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Client {
@@ -22,6 +26,9 @@ public class Client {
     // Propiedad nueva mis cuentas
     @OneToMany(mappedBy = "clientId", fetch = FetchType.EAGER)
     private Set<Account> accounts = new HashSet<>();
+
+    @OneToMany(mappedBy = "client")
+    private List<ClientLoan> clientLoans = new ArrayList<>();
 
     public Client() {
     }
@@ -71,5 +78,18 @@ public class Client {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public void addClientLoan(ClientLoan clientLoan) {
+        clientLoan.setClient(this);
+        clientLoans.add(clientLoan);
+    }
+
+    public List<Loan> getLoans(){
+        return clientLoans.stream().map(ClientLoan::getLoan).collect(Collectors.toList());
+    }
+
+    public List<ClientLoan> getClientLoans() {
+        return clientLoans;
     }
 }
