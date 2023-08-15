@@ -30,6 +30,9 @@ public class Client {
     @OneToMany(mappedBy = "client")
     private List<ClientLoan> clientLoans = new ArrayList<>();
 
+    @OneToMany(mappedBy = "cardHolder")
+    private List<Card> cards = new ArrayList<>();
+
     public Client() {
     }
 
@@ -42,6 +45,11 @@ public class Client {
     public void addAccount(Account account){
         account.setClientId(this);
         accounts.add(account);
+    }
+
+    public void addCard(Card card){
+        card.setCardHolder(this);
+        cards.add(card);
     }
 
     public Set<Account> getAccounts() {
@@ -91,5 +99,17 @@ public class Client {
 
     public List<ClientLoan> getClientLoans() {
         return clientLoans;
+    }
+
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public void setClientLoans(List<ClientLoan> clientLoans) {
+        this.clientLoans = clientLoans;
+    }
+
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
     }
 }
