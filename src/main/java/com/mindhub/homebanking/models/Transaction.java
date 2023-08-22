@@ -28,12 +28,11 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(TransactionType type, Double amount, String description, LocalDate date, Account accountId) {
+    public Transaction(TransactionType type, Double amount, String description, LocalDate date) {
         this.type = type;
         this.amount = amount;
         this.description = description;
         this.date = date;
-        this.accountId = accountId;
     }
 
     public Long getId() {

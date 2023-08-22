@@ -28,11 +28,10 @@ public class Account {
     public Account() {
     }
 
-    public Account(String number, Double balance, LocalDate creationDate, Client clientId) {
+    public Account(String number, Double balance, LocalDate creationDate) {
         this.number = number;
         this.balance = balance;
         this.creationDate = creationDate;
-        this.clientId = clientId;
 
     }
 

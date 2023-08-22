@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Random;
 
 @Entity
 public class Card {
@@ -98,5 +99,11 @@ public class Card {
 
     public void setFromDate(LocalDate fromDate) {
         this.fromDate = fromDate;
+    }
+
+    public String generateRandomCVV() {
+        Random random = new Random();
+        int randomCVV = 100 + random.nextInt(900);
+        return String.format("%03d", randomCVV);
     }
 }

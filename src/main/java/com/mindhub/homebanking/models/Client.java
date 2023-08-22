@@ -22,6 +22,9 @@ public class Client {
     private String firstName;
 
     private String lastName;
+
+    private String password;
+
     
     // Propiedad nueva mis cuentas
     @OneToMany(mappedBy = "clientId", fetch = FetchType.EAGER)
@@ -36,10 +39,11 @@ public class Client {
     public Client() {
     }
 
-    public Client(String email, String firstName, String lastName) {
+    public Client(String email, String firstName, String lastName, String password) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.password = password;
     }
 
     public void addAccount(Account account){
@@ -88,6 +92,14 @@ public class Client {
         this.lastName = lastName;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public void addClientLoan(ClientLoan clientLoan) {
         clientLoan.setClient(this);
         clientLoans.add(clientLoan);
@@ -112,4 +124,5 @@ public class Client {
     public void setCards(List<Card> cards) {
         this.cards = cards;
     }
+
 }
