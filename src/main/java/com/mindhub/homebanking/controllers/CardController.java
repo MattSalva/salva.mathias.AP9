@@ -30,15 +30,11 @@ public class CardController {
 
         Client client = clientRepository.findByEmail(authentication.getName());
 
-        if (client.getCards().stream()
-                .filter(card -> card.getType() == cardType)
-                .count() >= 3)  {
-            if (cardType.equals(CardType.CREDIT))
-                return new ResponseEntity<>("Maximo numero de tarjetas de credito alcanzado", HttpStatus.FORBIDDEN);
-            else
-                return new ResponseEntity<>("Maximo numero de tarjetas de debito alcanzado", HttpStatus.FORBIDDEN);
+        if (repo.countByTypeAndCardHolderEquals(cardType, client) >= 3 ){
+            return new ResponseEntity<>("Maximo numero de tipo de tarjetas de alcanzado", HttpStatus.FORBIDDEN);
+        } else if (repo.existsByColorAndTypeAndCardHolderEquals(cardColor, cardType, client)){
+            return new ResponseEntity<>("Ya existe una tarjeta de este tipo y de este color", HttpStatus.FORBIDDEN);
         }
-
 
 
 
