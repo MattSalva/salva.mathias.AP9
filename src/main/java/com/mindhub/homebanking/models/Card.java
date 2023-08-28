@@ -23,7 +23,7 @@ public class Card {
 
     private String number;
 
-    private Integer cvv;
+    private String cvv;
 
     private LocalDate thruDate;
     private LocalDate fromDate;
@@ -31,7 +31,7 @@ public class Card {
     public Card() {
     }
 
-    public Card(Client cardHolder, CardType type, CardColor color, String number, Integer cvv, LocalDate thruDate, LocalDate fromDate) {
+    public Card(Client cardHolder, CardType type, CardColor color, String number, String cvv, LocalDate thruDate, LocalDate fromDate) {
         this.cardHolder = cardHolder;
         this.type = type;
         this.color = color;
@@ -77,11 +77,11 @@ public class Card {
         this.number = number;
     }
 
-    public Integer getCvv() {
+    public String getCvv() {
         return cvv;
     }
 
-    public void setCvv(Integer cvv) {
+    public void setCvv(String cvv) {
         this.cvv = cvv;
     }
 
@@ -101,9 +101,24 @@ public class Card {
         this.fromDate = fromDate;
     }
 
-    public String generateRandomCVV() {
+    public static String generateRandomCVV() {
         Random random = new Random();
         int randomCVV = 100 + random.nextInt(900);
         return String.format("%03d", randomCVV);
+    }
+
+    public static String generateRandomCardNumber() {
+        Random random = new Random();
+        StringBuilder cardNumberBuilder = new StringBuilder();
+
+        for (int i = 0; i < 4; i++) {
+            int section = random.nextInt(10000);
+            cardNumberBuilder.append(String.format("%04d", section));
+            if (i < 3) {
+                cardNumberBuilder.append("-");
+            }
+        }
+
+        return cardNumberBuilder.toString();
     }
 }

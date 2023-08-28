@@ -1,5 +1,6 @@
 package com.mindhub.homebanking;
 
+import com.mindhub.homebanking.controllers.AccountController;
 import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,18 +40,25 @@ public class HomebankingApplication {
 			LocalDate tomorowDate = currentDate.plusDays(1);
 
 
-			Account account1 = new Account("VIN001", 5000.0, currentDate);
+			String accountNumber1 = AccountController.accountNumberChecked(accountRepository);
+			Account account1 = new Account(accountNumber1, 5000.0, currentDate);
 			clientMelba.addAccount(account1);
-			Account account2 = new Account("VIN002", 7500.0, tomorowDate);
+
+			String accountNumber2 = AccountController.accountNumberChecked(accountRepository);
+			Account account2 = new Account(accountNumber2, 7500.0, tomorowDate);
 			clientMelba.addAccount(account2);
 
 			accountRepository.save(account1);
 			accountRepository.save(account2);
 
 
-			Account account3 = new Account("VIN004", 100000.0, currentDate);
+
+			String accountNumber3 = AccountController.accountNumberChecked(accountRepository);
+			Account account3 = new Account(accountNumber3, 100000.0, currentDate);
 			clientMatt.addAccount(account3);
-			Account account4 = new Account("VIN005", 95000.0, tomorowDate.plusDays(7));
+
+			String accountNumber4 = AccountController.accountNumberChecked(accountRepository);
+			Account account4 = new Account(accountNumber4, 95000.0, tomorowDate.plusDays(7));
 			clientMatt.addAccount(account4);
 
 			accountRepository.save(account3);
@@ -117,9 +125,9 @@ public class HomebankingApplication {
 			clientLoanRepository.save(clientLoan3);
 			clientLoanRepository.save(clientLoan4);
 
-			Card card1 = new Card(clientMelba, CardType.DEBIT, CardColor.GOLD, "3240-2242-1232-4425", 901, LocalDate.now().plusYears(5), LocalDate.now());
-			Card card2 = new Card(clientMelba, CardType.CREDIT, CardColor.TITANIUM, "5355-3231-1228-8821", 155, LocalDate.now().plusYears(5), LocalDate.now());
-			Card card3 = new Card(clientMatt, CardType.CREDIT, CardColor.SILVER, "1123-5531-8894-4416", 212, LocalDate.now().plusYears(8), LocalDate.now());
+			Card card1 = new Card(clientMelba, CardType.DEBIT, CardColor.GOLD, "3240-2242-1232-4425", "901", LocalDate.now().plusYears(5), LocalDate.now());
+			Card card2 = new Card(clientMelba, CardType.CREDIT, CardColor.TITANIUM, "5355-3231-1228-8821", "155", LocalDate.now().plusYears(5), LocalDate.now());
+			Card card3 = new Card(clientMatt, CardType.CREDIT, CardColor.SILVER, "1123-5531-8894-4416", "212", LocalDate.now().plusYears(8), LocalDate.now());
 
 			cardRepository.save(card1);
 			cardRepository.save(card2);

@@ -1,11 +1,14 @@
 package com.mindhub.homebanking.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mindhub.homebanking.repositories.AccountRepository;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 @Entity
@@ -24,6 +27,8 @@ public class Account {
 
     @OneToMany(mappedBy = "accountId", fetch = FetchType.EAGER)
     private Set<Transaction> transactions = new HashSet<>();
+
+
 
     public Account() {
     }
@@ -82,5 +87,14 @@ public class Account {
 
     public void setTransactions(Set<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+
+
+    public static String generateRandomAccountNumber() {
+        String prefix = "VIN-";
+        Random random = new Random();
+        int accountNumber = random.nextInt(900000) + 100000;
+        return prefix + accountNumber;
     }
 }

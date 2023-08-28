@@ -21,17 +21,11 @@ class WebAuthorization {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/web/index.html").permitAll()
-                .antMatchers("/web/js/**").permitAll()
-                .antMatchers("/web/img/**").permitAll()
-                .antMatchers("/web/css/**").permitAll()
+                .antMatchers("/web/index.html", "/web/js/**", "/web/img/**", "/web/css/**", "/api/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
-                .antMatchers("/web/**").hasAnyAuthority("CLIENT","ADMIN")
-                .antMatchers("/api/login").permitAll()
-                .antMatchers("/api/logout").hasAnyAuthority("CLIENT","ADMIN")
-                .antMatchers("/api/clients/current").hasAnyAuthority("CLIENT","ADMIN")
-                .antMatchers("/api/accounts/**").hasAnyAuthority("CLIENT","ADMIN")
-                .antMatchers("/**").hasAuthority("ADMIN");
+                .antMatchers("/api/accounts/**", "/api/logout", "/api/clients/current", "/api/clients/current/accounts", "/api/clients/current/cards", "/web/**").hasAnyAuthority("CLIENT","ADMIN")
+                .antMatchers("/**").hasAuthority("ADMIN")
+                .anyRequest().denyAll();
         http.formLogin()
                 .usernameParameter("email")
                 .passwordParameter("password")
