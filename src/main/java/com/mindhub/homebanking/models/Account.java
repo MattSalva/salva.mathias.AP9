@@ -1,9 +1,6 @@
 package com.mindhub.homebanking.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mindhub.homebanking.repositories.AccountRepository;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -23,7 +20,7 @@ public class Account {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="client_id")
-    private Client clientId;
+    private Client client;
 
     @OneToMany(mappedBy = "accountId", fetch = FetchType.EAGER)
     private Set<Transaction> transactions = new HashSet<>();
@@ -73,12 +70,12 @@ public class Account {
         this.creationDate = creationDate;
     }
 
-    public Client getClientId() {
-        return clientId;
+    public Client getClient() {
+        return client;
     }
 
-    public void setClientId(Client clientId) {
-        this.clientId = clientId;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public Set<Transaction> getTransactions() {

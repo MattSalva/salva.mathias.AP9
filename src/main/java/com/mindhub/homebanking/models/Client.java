@@ -26,7 +26,7 @@ public class Client {
 
     
     // Propiedad nueva mis cuentas
-    @OneToMany(mappedBy = "clientId", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<Account> accounts = new HashSet<>();
 
     @OneToMany(mappedBy = "client")
@@ -46,7 +46,7 @@ public class Client {
     }
 
     public void addAccount(Account account){
-        account.setClientId(this);
+        account.setClient(this);
         accounts.add(account);
     }
 

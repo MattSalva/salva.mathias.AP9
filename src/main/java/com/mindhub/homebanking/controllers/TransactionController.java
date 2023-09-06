@@ -5,9 +5,6 @@ import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.models.Transaction;
 import com.mindhub.homebanking.models.TransactionType;
-import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
-import com.mindhub.homebanking.repositories.TransactionRepository;
 import com.mindhub.homebanking.services.AccountService;
 import com.mindhub.homebanking.services.ClientService;
 import com.mindhub.homebanking.services.TransactionService;
@@ -62,7 +59,7 @@ public class TransactionController {
         Account originAccount = accountService.findByNumber(fromAccountNumber);
         Account recipientAccount = accountService.findByNumber(toAccountNumber);
 
-        if (originAccount.getClientId() != client){
+        if (originAccount.getClient() != client){
             return new ResponseEntity<>("Account not valid for this client", HttpStatus.FORBIDDEN);
         }
 
