@@ -3,6 +3,9 @@ package com.mindhub.homebanking;
 import com.mindhub.homebanking.controllers.AccountController;
 import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.*;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -26,43 +29,43 @@ public class HomebankingApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
+	public CommandLineRunner initData(ClientService clientService, TransactionService transactionService, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository, AccountService accountService){
 		return (args) -> {
 
 			Client clientMelba = new Client("mmorel@outlook.com", "Melba", "Morel", passwordEncoder.encode("123456"));
 			Client clientMatt = new Client("matt@outlook.com", "Matt", "Smith", passwordEncoder.encode("qwerty"));
 			Client admin = new Client("admin@admin.com", "admin", "admin", passwordEncoder.encode("123456"));
 
-			clientRepository.save(clientMelba);
-			clientRepository.save(clientMatt);
-			clientRepository.save(admin);
+			clientService.save(clientMelba);
+			clientService.save(clientMatt);
+			clientService.save(admin);
 			LocalDate currentDate = LocalDate.now();
 			LocalDate tomorowDate = currentDate.plusDays(1);
 
 
-			String accountNumber1 = AccountController.accountNumberChecked(accountRepository);
+			String accountNumber1 = AccountController.accountNumberChecked(accountService);
 			Account account1 = new Account(accountNumber1, 5000.0, currentDate);
 			clientMelba.addAccount(account1);
 
-			String accountNumber2 = AccountController.accountNumberChecked(accountRepository);
+			String accountNumber2 = AccountController.accountNumberChecked(accountService);
 			Account account2 = new Account(accountNumber2, 7500.0, tomorowDate);
 			clientMelba.addAccount(account2);
 
-			accountRepository.save(account1);
-			accountRepository.save(account2);
+			accountService.save(account1);
+			accountService.save(account2);
 
 
 
-			String accountNumber3 = AccountController.accountNumberChecked(accountRepository);
+			String accountNumber3 = AccountController.accountNumberChecked(accountService);
 			Account account3 = new Account(accountNumber3, 100000.0, currentDate);
 			clientMatt.addAccount(account3);
 
-			String accountNumber4 = AccountController.accountNumberChecked(accountRepository);
+			String accountNumber4 = AccountController.accountNumberChecked(accountService);
 			Account account4 = new Account(accountNumber4, 95000.0, tomorowDate.plusDays(7));
 			clientMatt.addAccount(account4);
 
-			accountRepository.save(account3);
-			accountRepository.save(account4);
+			accountService.save(account3);
+			accountService.save(account4);
 
 			Transaction transaction1 = new Transaction(TransactionType.CREDIT, 500.0, "Bono", tomorowDate.plusDays(2));
 			Transaction transaction2 = new Transaction(TransactionType.DEBIT, 200.0, "Impuesto", tomorowDate.plusDays(2));
@@ -86,15 +89,15 @@ public class HomebankingApplication {
 			account4.addTransaction(transaction8);
 			account4.addTransaction(transaction9);
 
-			transactionRepository.save(transaction1);
-			transactionRepository.save(transaction2);
-			transactionRepository.save(transaction3);
-			transactionRepository.save(transaction4);
-			transactionRepository.save(transaction5);
-			transactionRepository.save(transaction6);
-			transactionRepository.save(transaction7);
-			transactionRepository.save(transaction8);
-			transactionRepository.save(transaction9);
+			transactionService.save(transaction1);
+			transactionService.save(transaction2);
+			transactionService.save(transaction3);
+			transactionService.save(transaction4);
+			transactionService.save(transaction5);
+			transactionService.save(transaction6);
+			transactionService.save(transaction7);
+			transactionService.save(transaction8);
+			transactionService.save(transaction9);
 
 			Loan loan1 = new Loan("Hipotecario", 500000.0, List.of(12, 24, 36, 48, 60));
 			Loan loan2 = new Loan("Personal", 100000.0, List.of(6, 12, 24));

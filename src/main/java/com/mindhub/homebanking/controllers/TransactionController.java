@@ -8,6 +8,9 @@ import com.mindhub.homebanking.models.TransactionType;
 import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
 import com.mindhub.homebanking.repositories.TransactionRepository;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,18 +28,18 @@ import java.time.LocalDate;
 public class TransactionController {
 
     @Autowired
-    AccountRepository accountRepository;
+    AccountService accountService;
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
     @Autowired
-    private TransactionRepository transactionRepository;
+    private TransactionService transactionService;
 
     @Transactional
     @PostMapping("/transactions")
     public ResponseEntity<Object> createTransaction(Authentication authentication,
                                                     @RequestParam Double amount, @RequestParam String description, @RequestParam String fromAccountNumber, @RequestParam String toAccountNumber){
 
-        Client client = clientRepository.findByEmail(authentication.getName());
+        Client client = clientService.findByEmail(authentication.getName());
 
         if (amount.isNaN() || description.isEmpty() || fromAccountNumber.isEmpty() || toAccountNumber.isEmpty()) {
 
@@ -48,16 +51,16 @@ public class TransactionController {
             return new ResponseEntity<>("Account numbers should be different", HttpStatus.FORBIDDEN);
         }
 
-        if (accountRepository.findByNumber(fromAccountNumber) == null){
+        if (accountService.findByNumber(fromAccountNumber) == null){
             return new ResponseEntity<>("Origin account does not exist", HttpStatus.FORBIDDEN);
         }
 
-        if (accountRepository.findByNumber(toAccountNumber) == null){
+        if (accountService.findByNumber(toAccountNumber) == null){
             return new ResponseEntity<>("Recipient account does not exist", HttpStatus.FORBIDDEN);
         }
 
-        Account originAccount = accountRepository.findByNumber(fromAccountNumber);
-        Account recipientAccount = accountRepository.findByNumber(toAccountNumber);
+        Account originAccount = accountService.findByNumber(fromAccountNumber);
+        Account recipientAccount = accountService.findByNumber(toAccountNumber);
 
         if (originAccount.getClientId() != client){
             return new ResponseEntity<>("Account not valid for this client", HttpStatus.FORBIDDEN);
@@ -79,11 +82,11 @@ public class TransactionController {
         recipientAccount.setBalance(recipientAccount.getBalance() + amount);
 
 
-        transactionRepository.save(debitTransaction);
-        transactionRepository.save(creditTransaction);
+        transactionService.save(debitTransaction);
+        transactionService.save(creditTransaction);
 
-        accountRepository.save(originAccount);
-        accountRepository.save(recipientAccount);
+        accountService.save(originAccount);
+        accountService.save(recipientAccount);
 
         return new ResponseEntity<>("Transferencia realizada correctamente", HttpStatus.CREATED);
 

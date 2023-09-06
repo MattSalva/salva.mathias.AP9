@@ -4,6 +4,8 @@ import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.CardRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.CardService;
+import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,25 +22,25 @@ import java.util.stream.Collectors;
 public class CardController {
 
     @Autowired
-    private CardRepository repo;
+    private CardService cardService;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @PostMapping("/clients/current/cards")
     public ResponseEntity<Object> createCard(Authentication authentication, CardColor cardColor, CardType cardType){
 
-        Client client = clientRepository.findByEmail(authentication.getName());
+        Client client = clientService.findByEmail(authentication.getName());
 
-        if (repo.countByTypeAndCardHolderEquals(cardType, client) >= 3 ){
+        if (cardService.countByTypeAndCardHolderEquals(cardType, client) >= 3 ){
             return new ResponseEntity<>("Maximo numero de tipo de tarjetas de alcanzado", HttpStatus.FORBIDDEN);
-        } else if (repo.existsByColorAndTypeAndCardHolderEquals(cardColor, cardType, client)){
+        } else if (cardService.existsByColorAndTypeAndCardHolderEquals(cardColor, cardType, client)){
             return new ResponseEntity<>("Ya existe una tarjeta de este tipo y de este color", HttpStatus.FORBIDDEN);
         }
 
 
 
-        String cardNumber = cardNumberChecked(repo);
+        String cardNumber = cardNumberChecked(cardService);
         Client cardHolder = client;
         String cvv = Card.generateRandomCVV();
         LocalDate startDate = LocalDate.now();
@@ -46,21 +48,21 @@ public class CardController {
 
         Card newCard = new Card(cardHolder, cardType, cardColor, cardNumber, cvv, expirationDate, startDate);
 
-        repo.save(newCard);
+        cardService.save(newCard);
         client.addCard(newCard);
 
         return new ResponseEntity<>("Tarjeta creada correctamente", HttpStatus.CREATED);
 
     }
 
-    public static String cardNumberChecked(CardRepository repo){
+    public static String cardNumberChecked(CardService cardService){
         int maxAttempts = 10; // Límite de intentos para evitar bucles infinitos
         int attempt = 0;
 
         while (attempt < maxAttempts) {
             String candidateAccountNumber = Card.generateRandomCardNumber();
 
-            if (repo.findByNumber(candidateAccountNumber) == null) {
+            if (cardService.findByNumber(candidateAccountNumber) == null) {
                 return candidateAccountNumber;
             }
 

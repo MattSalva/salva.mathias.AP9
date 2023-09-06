@@ -23,7 +23,7 @@ class WebAuthorization {
         http.authorizeRequests()
                 .antMatchers("/web/index.html", "/web/js/**", "/web/img/**", "/web/css/**", "/api/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
-                .antMatchers("/api/accounts/**", "/api/logout", "/api/clients/current", "/api/clients/current/accounts", "/api/clients/current/cards", "/api/transactions","/web/**").hasAnyAuthority("CLIENT","ADMIN")
+                .antMatchers("/api/accounts/**", "/api/logout", "/api/clients/current", "/api/clients/current/accounts", "/api/clients/current/cards", "/api/transactions", "/api/loans","/web/**").hasAnyAuthority("CLIENT","ADMIN")
                 .antMatchers("/**").hasAuthority("ADMIN")
                 .anyRequest().denyAll();
         http.formLogin()

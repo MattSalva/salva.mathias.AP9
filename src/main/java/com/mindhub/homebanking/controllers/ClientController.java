@@ -5,6 +5,8 @@ import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,30 +25,29 @@ import java.util.stream.Collectors;
 public class ClientController {
 
     @Autowired
-    private ClientRepository repo;
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private AccountService accountService;
 
     @GetMapping("/clients")
     public List<ClientDTO> getClients(){
-        return repo.findAll().stream().map(ClientDTO::new).collect(Collectors.toList());
+        return clientService.getClients();
     }
 
     @GetMapping("/clients/{id}")
     public ClientDTO getClientById(@PathVariable Long id){
 
-        Optional<Client> client = repo.findById(id);
+        return new ClientDTO(clientService.findById(id));
 
-        return new ClientDTO(client.get());
     }
 
     @GetMapping("/clients/current")
     public ClientDTO getCurrentClient(Authentication authentication){
-        return new ClientDTO(repo.findByEmail(authentication.getName()));
+        return clientService.getCurrent(authentication.getName());
     }
 
     @PostMapping("/clients")
@@ -60,19 +61,20 @@ public class ClientController {
 
         }
 
-        if (repo.findByEmail(email) !=  null) {
+        if (clientService.findByEmail(email) !=  null) {
 
             return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
 
         }
 
-        String accountNumber = AccountController.accountNumberChecked(accountRepository);
+        String accountNumber = AccountController.accountNumberChecked(accountService);
         Account account = new Account(accountNumber, 0.0, LocalDate.now());
 
         Client newClient = new Client(email, firstName, lastName, passwordEncoder.encode(password));
         newClient.addAccount(account);
-        repo.save(newClient);
-        accountRepository.save(account);
+        //repo.save(newClient);
+        clientService.save(newClient);
+        accountService.save(account);
 
 
         return new ResponseEntity<>(HttpStatus.CREATED);

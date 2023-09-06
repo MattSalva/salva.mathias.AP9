@@ -5,6 +5,8 @@ import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,19 +23,20 @@ import java.util.stream.Collectors;
 public class AccountController {
 
     @Autowired
-    private AccountRepository repo;
+    private AccountService accountService;
+
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @GetMapping("/accounts")
     public List<AccountDTO> getAccounts(){
-        return repo.findAll().stream().map(AccountDTO::new).collect(Collectors.toList());
+        return accountService.getAccounts();
     }
 
     @GetMapping("/accounts/{id}")
     public ResponseEntity<Object> getAccountById(@PathVariable Long id, Authentication authentication){
-        Client client = clientRepository.findByEmail(authentication.getName());
-        Account account = repo.findById(id).orElse(null);
+        Client client = clientService.findByEmail(authentication.getName());
+        Account account = accountService.findById(id);
 
         if (account == null){
             return new ResponseEntity<>("Account not found", HttpStatus.BAD_GATEWAY);
@@ -50,8 +53,7 @@ public class AccountController {
 
     @GetMapping("/clients/current/accounts")
     public List<AccountDTO> getAccounts(Authentication authentication){
-        Client client = clientRepository.findByEmail(authentication.getName());
-        return client.getAccounts().stream().map(AccountDTO::new).collect(Collectors.toList());
+        return clientService.getAccounts(authentication.getName());
     }
 
 
@@ -59,7 +61,7 @@ public class AccountController {
     public ResponseEntity<Object> createAccount(Authentication authentication) {
 
         // Obtener el cliente autenticado
-        Client client = clientRepository.findByEmail(authentication.getName());
+        Client client = clientService.findByEmail(authentication.getName());
 
         // Verificar si el cliente tiene menos de 3 cuentas registradas
         if (client.getAccounts().size() >= 3) {
@@ -67,25 +69,25 @@ public class AccountController {
         }
 
         // Crear una nueva cuenta con número aleatorio y saldo 0
-        String accountNumber = accountNumberChecked(repo);
+        String accountNumber = accountNumberChecked(accountService);
 
         Account newAccount = new Account(accountNumber, 0.0, LocalDate.now());
         client.addAccount(newAccount);
 
         // Guardar la cuenta a través del repositorio
-        repo.save(newAccount);
+        accountService.save(newAccount);
 
         return new ResponseEntity<>("Cuenta creada con éxito", HttpStatus.CREATED);
     }
 
-    public static String accountNumberChecked(AccountRepository repo){
+    public static String accountNumberChecked(AccountService accountService){
         int maxAttempts = 10; // Límite de intentos para evitar bucles infinitos
         int attempt = 0;
 
         while (attempt < maxAttempts) {
             String candidateAccountNumber = Account.generateRandomAccountNumber();
 
-            if (repo.findByNumber(candidateAccountNumber) == null) {
+            if (accountService.findByNumber(candidateAccountNumber) == null) {
                 return candidateAccountNumber;
             }
 
