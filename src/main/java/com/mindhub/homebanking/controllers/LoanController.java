@@ -69,10 +69,10 @@ public class LoanController {
 
         //Verificar que la cuenta de destino pertenezca al cliente autenticado
         if (!client.getAccounts().contains(accountCredited))
-            return new ResponseEntity<>("ERR: The account does not belong to this user ", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("The account does not belong to this user ", HttpStatus.FORBIDDEN);
 
         //Verificar que el monto solicitado no exceda el monto máximo del préstamo
-        if (loanAmount >= loan.getMaxAmount() )
+        if (loanAmount > loan.getMaxAmount() )
             return new ResponseEntity<>("The amount exceeds the maximum", HttpStatus.FORBIDDEN);
 
         //Verifica que la cantidad de cuotas se encuentre entre las disponibles del préstamo
