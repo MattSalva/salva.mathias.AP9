@@ -6,13 +6,13 @@ import com.mindhub.homebanking.repositories.CardRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
 import com.mindhub.homebanking.services.CardService;
 import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.utils.CardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;
@@ -40,9 +40,9 @@ public class CardController {
 
 
 
-        String cardNumber = cardNumberChecked(cardService);
+        String cardNumber = CardUtils.cardNumberChecked(cardService);
         Client cardHolder = client;
-        String cvv = Card.generateRandomCVV();
+        String cvv = CardUtils.generateRandomCVV();
         LocalDate startDate = LocalDate.now();
         LocalDate expirationDate = startDate.plusYears(5);
 
@@ -55,21 +55,21 @@ public class CardController {
 
     }
 
-    public static String cardNumberChecked(CardService cardService){
-        int maxAttempts = 10; // Límite de intentos para evitar bucles infinitos
-        int attempt = 0;
+    @Transactional
+    @DeleteMapping("/cards/{id}")
+    public ResponseEntity<Object> deleteCard(@PathVariable Long id, Authentication authentication){
+        Card card = cardService.findById(id);
 
-        while (attempt < maxAttempts) {
-            String candidateAccountNumber = Card.generateRandomCardNumber();
+        if (card == null)
+            return new ResponseEntity<>("Card does not exist", HttpStatus.BAD_REQUEST);
 
-            if (cardService.findByNumber(candidateAccountNumber) == null) {
-                return candidateAccountNumber;
-            }
+        if (!card.getCardHolder().equals(clientService.findByEmail(authentication.getName())))
+            return new ResponseEntity<>("Unauthorized access to this card", HttpStatus.FORBIDDEN);
 
-            attempt++;
-        }
-
-        throw new IllegalStateException("No se pudo generar un número de tarjeta único después de " + maxAttempts + " intentos.");
+        cardService.delete(card);
+        return new ResponseEntity<>("Card deleted", HttpStatus.OK);
     }
+
+
 
 }

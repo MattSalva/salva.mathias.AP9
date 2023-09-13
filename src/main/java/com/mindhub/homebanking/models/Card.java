@@ -101,24 +101,5 @@ public class Card {
         this.fromDate = fromDate;
     }
 
-    public static String generateRandomCVV() {
-        Random random = new Random();
-        int randomCVV = 100 + random.nextInt(900);
-        return String.format("%03d", randomCVV);
-    }
 
-    public static String generateRandomCardNumber() {
-        Random random = new Random();
-        StringBuilder cardNumberBuilder = new StringBuilder();
-
-        for (int i = 0; i < 4; i++) {
-            int section = random.nextInt(10000);
-            cardNumberBuilder.append(String.format("%04d", section));
-            if (i < 3) {
-                cardNumberBuilder.append("-");
-            }
-        }
-
-        return cardNumberBuilder.toString();
-    }
 }

@@ -7,6 +7,8 @@ import com.mindhub.homebanking.models.Client;
 
 public interface CardService {
 
+    Card findById(Long id);
+
     Integer countByTypeAndCardHolderEquals(CardType cardType, Client client);
 
     Boolean existsByColorAndTypeAndCardHolderEquals(CardColor cardColor, CardType cardType, Client client);
@@ -14,4 +16,6 @@ public interface CardService {
     Card findByNumber(String number);
 
     void save(Card card);
+
+    void delete(Card card);
 }

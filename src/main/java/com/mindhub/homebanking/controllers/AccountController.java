@@ -5,6 +5,7 @@ import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.services.AccountService;
 import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +66,7 @@ public class AccountController {
         }
 
         // Crear una nueva cuenta con número aleatorio y saldo 0
-        String accountNumber = accountNumberChecked(accountService);
+        String accountNumber = AccountUtils.accountNumberChecked(accountService);
 
         Account newAccount = new Account(accountNumber, 0.0, LocalDate.now());
         client.addAccount(newAccount);
@@ -76,21 +77,6 @@ public class AccountController {
         return new ResponseEntity<>("Cuenta creada con éxito", HttpStatus.CREATED);
     }
 
-    public static String accountNumberChecked(AccountService accountService){
-        int maxAttempts = 10; // Límite de intentos para evitar bucles infinitos
-        int attempt = 0;
 
-        while (attempt < maxAttempts) {
-            String candidateAccountNumber = Account.generateRandomAccountNumber();
-
-            if (accountService.findByNumber(candidateAccountNumber) == null) {
-                return candidateAccountNumber;
-            }
-
-            attempt++;
-        }
-
-        throw new IllegalStateException("No se pudo generar un número de cuenta único después de " + maxAttempts + " intentos.");
-    }
 
 }

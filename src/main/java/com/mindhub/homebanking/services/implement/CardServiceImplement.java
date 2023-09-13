@@ -16,6 +16,11 @@ public class CardServiceImplement implements CardService {
     private CardRepository cardRepository;
 
     @Override
+    public Card findById(Long id) {
+        return cardRepository.findCardById(id);
+    }
+
+    @Override
     public Integer countByTypeAndCardHolderEquals(CardType cardType, Client client) {
         return cardRepository.countByTypeAndCardHolderEquals(cardType, client);
     }
@@ -34,6 +39,11 @@ public class CardServiceImplement implements CardService {
     @Override
     public void save(Card card) {
         cardRepository.save(card);
+    }
+
+    @Override
+    public void delete(Card card) {
+        cardRepository.delete(card);
     }
 
 

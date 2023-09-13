@@ -88,10 +88,5 @@ public class Account {
 
 
 
-    public static String generateRandomAccountNumber() {
-        String prefix = "VIN-";
-        Random random = new Random();
-        int accountNumber = random.nextInt(900000) + 100000;
-        return prefix + accountNumber;
-    }
+
 }
